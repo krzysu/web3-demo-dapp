@@ -74,81 +74,90 @@ export function Leaderboard() {
 
   return (
     <div>
-      <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-900">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Rank
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Address
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Auth Count
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                First Seen
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Last Seen
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {data.entries.map((entry, index) => (
-              <tr
-                key={entry.address}
-                className={
-                  entry.address === address
-                    ? "bg-blue-50 dark:bg-blue-900/20"
-                    : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                }
-              >
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {page * limit + index + 1}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap font-mono text-sm">
-                  {entry.address}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {entry.authCount}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {formatDistanceToNow(new Date(entry.firstAuth), {
-                    addSuffix: true,
-                  })}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {formatDistanceToNow(new Date(entry.lastAuth), {
-                    addSuffix: true,
-                  })}
-                </td>
+      <div className="w-full bg-white dark:bg-gray-800 shadow-sm rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-900">
+              <tr>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Rank
+                </th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Address
+                </th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap">
+                  Auth Count
+                </th>
+                <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  First Seen
+                </th>
+                <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Last Seen
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              {data.entries.map((entry, index) => (
+                <tr
+                  key={entry.address}
+                  className={
+                    entry.address === address
+                      ? "bg-blue-50 dark:bg-blue-900/20"
+                      : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                  }
+                >
+                  <td className="px-4 sm:px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                    {page * limit + index + 1}
+                  </td>
+                  <td className="px-4 sm:px-6 py-4 font-mono text-sm">
+                    <div
+                      className="max-w-[120px] sm:max-w-none truncate"
+                      title={entry.address}
+                    >
+                      {entry.address}
+                    </div>
+                  </td>
+                  <td className="px-4 sm:px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                    {entry.authCount}
+                  </td>
+                  <td className="hidden sm:table-cell px-4 sm:px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                    {formatDistanceToNow(new Date(entry.firstAuth), {
+                      addSuffix: true,
+                    })}
+                  </td>
+                  <td className="hidden sm:table-cell px-4 sm:px-6 py-4 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                    {formatDistanceToNow(new Date(entry.lastAuth), {
+                      addSuffix: true,
+                    })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-4 flex justify-between items-center">
-          <button
-            onClick={() => setPage((p) => Math.max(0, p - 1))}
-            disabled={page === 0}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Previous
-          </button>
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex gap-2 order-2 sm:order-1">
+            <button
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed min-w-[90px]"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              disabled={page >= totalPages - 1}
+              className="px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed min-w-[90px]"
+            >
+              Next
+            </button>
+          </div>
+          <span className="text-sm text-gray-600 dark:text-gray-400 order-1 sm:order-2">
             Page {page + 1} of {totalPages}
           </span>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-            disabled={page >= totalPages - 1}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-          </button>
         </div>
       )}
     </div>

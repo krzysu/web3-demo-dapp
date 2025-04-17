@@ -33,7 +33,11 @@ export default function RootLayout({
       >
         <WalletProvider>
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow">
+            <div className="container mx-auto max-w-6xl px-4 py-4 md:py-6">
+              {children}
+            </div>
+          </main>
           <Footer />
         </WalletProvider>
       </body>
