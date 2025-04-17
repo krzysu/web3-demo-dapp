@@ -1,6 +1,7 @@
 "use client";
 
 import { TokenBalances } from "@/components/token/TokenBalances";
+import { AddToLeaderboard } from "@/components/leaderboard/AddToLeaderboard";
 
 export default function Home() {
   return (
@@ -11,9 +12,10 @@ export default function Home() {
 
       <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
         Welcome to our Web3 demonstration application. Connect your wallet to
-        see your token balances.
+        see your token balances and add them to the leaderboard.
       </p>
 
+      <AddToLeaderboard />
       <TokenBalances />
     </div>
   );
