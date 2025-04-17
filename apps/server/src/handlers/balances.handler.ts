@@ -1,6 +1,7 @@
 import type { DuneBalanceResponse } from "../types/dune.types.js";
 import type { BalancesResponse } from "../schemas/balances.schema.js";
 import { ValidationError, ApiError } from "../utils/errors.js";
+import { buildTokenBalance } from "../utils/builders.js";
 
 /**
  * Fetches token balances for an Ethereum address using Dune Echo API
@@ -21,15 +22,18 @@ export async function getTokenBalances(
   }
 
   try {
-    // Call Dune Echo API
-    const response = await fetch(
-      `https://api.dune.com/api/echo/v1/balances/evm/${address}`,
-      {
-        headers: {
-          "X-Dune-Api-Key": apiKey,
-        },
-      }
+    // Call Dune Echo API with metadata and spam filtering
+    const url = new URL(
+      `https://api.dune.com/api/echo/v1/balances/evm/${address}`
     );
+    url.searchParams.append("metadata", "url,logo");
+    url.searchParams.append("exclude_spam_tokens", "true");
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        "X-Dune-Api-Key": apiKey,
+      },
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -43,17 +47,20 @@ export async function getTokenBalances(
       throw new ApiError("Dune API error", data.errors);
     }
 
-    // Format response
+    // Format and sort response
+    const balances = data.balances
+      .filter((b) => !b.low_liquidity)
+      .map((b) => buildTokenBalance(b))
+      .sort((a, b) => {
+        // Sort by value_usd descending, handling undefined values
+        const aValue = a.value_usd ?? 0;
+        const bValue = b.value_usd ?? 0;
+        return bValue - aValue;
+      });
+
     return {
       address,
-      balances: data.balances
-        .filter((b) => b.symbol && b.name) // Only include tokens with symbol and name
-        .map((b) => ({
-          name: b.name || "",
-          symbol: b.symbol || "",
-          balance: b.amount,
-          chain: b.chain,
-        })),
+      balances,
     };
   } catch (error) {
     console.error("Failed to fetch balances:", error);

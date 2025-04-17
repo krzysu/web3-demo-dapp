@@ -8,12 +8,22 @@ export interface DuneBalanceResponse {
   response_time?: string;
 }
 
+interface TokenMetadata {
+  logo?: string;
+  url?: string;
+}
+
 export interface DuneBalance {
   chain: string;
   chain_id: number;
   address: string;
   amount: string;
   symbol?: string;
-  decimals?: number;
   name?: string;
+  decimals?: number;
+  price_usd?: number;
+  value_usd?: number;
+  token_metadata?: TokenMetadata;
+  pool_size: number;
+  low_liquidity?: boolean;
 }

@@ -1,11 +1,20 @@
+"use client";
+
+import { TokenBalances } from "@/components/token/TokenBalances";
+
 export default function Home() {
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-4">Web3 Demo dApp</h1>
-      <p className="text-lg text-gray-600 dark:text-gray-300">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Web3 Demo dApp</h1>
+      </div>
+
+      <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
         Welcome to our Web3 demonstration application. Connect your wallet to
-        get started.
+        see your token balances.
       </p>
+
+      <TokenBalances />
     </div>
   );
 }
