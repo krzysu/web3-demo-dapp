@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeAll, beforeEach, afterAll } from "vitest";
 import request from "supertest";
+import type { Address } from "viem";
+
 import { app } from "../src/index.js";
 import {
   createTestDb,
@@ -7,7 +9,6 @@ import {
   clearTestData,
   testUsers,
 } from "./test-db.js";
-import type { Address } from "viem";
 import type { LeaderboardResponse } from "../src/schemas/leaderboard.schema.js";
 
 describe("GET /leaderboard", () => {

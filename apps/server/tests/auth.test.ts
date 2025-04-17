@@ -1,13 +1,15 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, beforeEach, afterAll } from "vitest";
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import request from "supertest";
 
-// Import app after environment variables are loaded
 import { app } from "../src/index.js";
+import { createTestDb, clearTestData } from "./test-db.js";
 
 describe("POST /auth", () => {
+  let testDb: ReturnType<typeof createTestDb>;
+
   // Test private key (never use this in production!)
   const testPrivateKey =
     "0x1234567890123456789012345678901234567890123456789012345678901234";
@@ -16,6 +18,19 @@ describe("POST /auth", () => {
     account,
     chain: mainnet,
     transport: http(),
+  });
+
+  beforeAll(() => {
+    testDb = createTestDb();
+    app.locals.db = testDb.db;
+  });
+
+  beforeEach(async () => {
+    await clearTestData(testDb.db);
+  });
+
+  afterAll(() => {
+    testDb.sqlite.close();
   });
 
   it("should validate request and return auth token", async () => {

@@ -64,7 +64,7 @@ app.post(
   "/auth",
   validateBody(authSchema),
   asyncHandler(async (req: Request, res: Response) => {
-    await verifySignature(req.body);
+    await verifySignature(req.body, res.app.locals.db);
     const token = createAuthToken(req.body.address);
 
     const response: AuthResponse = {

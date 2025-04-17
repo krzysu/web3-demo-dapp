@@ -1,13 +1,13 @@
 import { desc, sql } from "drizzle-orm";
+import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import type { Address } from "viem";
-import { db as defaultDb } from "../db/client.js";
+
 import { users } from "../db/schema.js";
 import { ValidationError } from "../utils/errors.js";
 import type {
   LeaderboardQueryParams,
   LeaderboardResponse,
 } from "../schemas/leaderboard.schema.js";
-import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import type * as schema from "../db/schema.js";
 
 type DB = BetterSQLite3Database<typeof schema>;
@@ -18,7 +18,7 @@ type DB = BetterSQLite3Database<typeof schema>;
  */
 export async function getLeaderboard(
   params: LeaderboardQueryParams,
-  db: DB = defaultDb
+  db: DB
 ): Promise<LeaderboardResponse> {
   // Validate input
   if (params.limit < 1 || params.limit > 100) {
@@ -45,7 +45,7 @@ export async function getLeaderboard(
 
   return {
     entries: entries.map((entry) => ({
-      address: entry.address as Address, // Safe to cast as address is validated during insertion
+      address: entry.address as Address,
       authCount: entry.authCount,
       firstAuth: new Date(entry.firstAuth),
       lastAuth: new Date(entry.lastAuth),
