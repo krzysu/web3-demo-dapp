@@ -1,0 +1,13 @@
+{
+  "name": "web3-demo-dapp",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "client:dev": "yarn workspace client dev",
+    "server:dev": "yarn workspace server dev"
+  },
+  "packageManager": "yarn@1.22.22"
+}
