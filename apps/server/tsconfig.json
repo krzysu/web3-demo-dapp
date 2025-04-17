@@ -5,10 +5,7 @@
     "strict": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "types": [
-      "node"
-    ],
-    "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
-  }
+    "types": ["node", "vitest"]
+  },
+  "include": ["src/**/*", "tests/**/*"]
 }

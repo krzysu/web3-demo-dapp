@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "client:dev": "yarn workspace client dev",
-    "server:dev": "yarn workspace server dev"
+    "server:dev": "yarn workspace server dev",
+    "server:test": "yarn workspace server test"
   },
   "packageManager": "yarn@1.22.22"
 }
