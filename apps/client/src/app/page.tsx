@@ -1,5 +1,3 @@
-"use client";
-
 import { TokenBalances } from "@/components/token/TokenBalances";
 import { AddToLeaderboard } from "@/components/leaderboard/AddToLeaderboard";
 
