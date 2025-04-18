@@ -2,13 +2,16 @@
   "name": "web3-demo-dapp",
   "version": "1.0.0",
   "private": true,
+  "author": "Kris Urbas (@krzysu)",
+  "license": "MIT",
   "workspaces": [
     "apps/*"
   ],
   "scripts": {
     "client:dev": "yarn workspace client dev",
     "server:dev": "yarn workspace server dev",
-    "server:test": "yarn workspace server test"
+    "server:test": "yarn workspace server test",
+    "server:db:migrate": "yarn workspace server db:push"
   },
   "packageManager": "yarn@1.22.22"
 }
