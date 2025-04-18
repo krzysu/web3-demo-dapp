@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAccount, useSignMessage } from "wagmi";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 function formatAddress(address: string): string {
   const start = address.slice(0, 6);
@@ -17,20 +18,46 @@ function formatTimestamp(date: Date): string {
   return date.toISOString().replace("T", " ").slice(0, 19) + " UTC";
 }
 
+interface AuthData {
+  message: string;
+  signature: string;
+  address: string;
+}
+
+async function addToLeaderboardRequest(data: AuthData) {
+  const response = await fetch("/api/auth", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Authentication failed");
+  }
+
+  return response.json();
+}
+
 export function AddToLeaderboard() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
+  const queryClient = useQueryClient();
+  const [signError, setSignError] = useState<string | null>(null);
 
-  const [authStatus, setAuthStatus] = useState<{
-    isLoading: boolean;
-    error?: string;
-    success?: boolean;
-  }>({
-    isLoading: false,
+  const mutation = useMutation({
+    mutationFn: addToLeaderboardRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+    },
   });
 
   async function handleAddToLeaderboard() {
     if (!address) return;
+
+    // Clear previous error state
+    setSignError(null);
 
     const nonce = generateNonce();
     const timestamp = formatTimestamp(new Date());
@@ -42,35 +69,18 @@ Timestamp: ${timestamp}
 
 I agree to be listed on the leaderboard.`;
 
-    setAuthStatus({ isLoading: true });
-
     try {
       const signature = await signMessageAsync({ message });
-      const response = await fetch("/api/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message,
-          signature,
-          address,
-        }),
+      await mutation.mutateAsync({
+        message,
+        signature,
+        address,
       });
-
-      if (!response.ok) {
-        throw new Error("Authentication failed");
-      }
-
-      setAuthStatus({ isLoading: false, success: true });
     } catch (error) {
-      setAuthStatus({
-        isLoading: false,
-        error:
-          error instanceof Error ? error.message : "Failed to authenticate",
-      });
-    } finally {
-      setAuthStatus((current) => ({ ...current, isLoading: false }));
+      // Set error state with the caught error message
+      setSignError(
+        error instanceof Error ? error.message : "Failed to sign message"
+      );
     }
   }
 
@@ -83,20 +93,24 @@ I agree to be listed on the leaderboard.`;
       <div className="flex items-center gap-4">
         <button
           onClick={handleAddToLeaderboard}
-          disabled={authStatus.isLoading}
+          disabled={mutation.isPending}
           className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
         >
-          {authStatus.isLoading
+          {mutation.isPending
             ? "Adding to Leaderboard..."
             : "Add to Leaderboard"}
         </button>
-        {authStatus.success && (
+        {mutation.isSuccess && (
           <span className="text-green-500 font-medium">
             Successfully added to leaderboard!
           </span>
         )}
-        {authStatus.error && (
-          <span className="text-red-500 font-medium">{authStatus.error}</span>
+        {(mutation.isError || signError) && (
+          <span className="text-red-500 font-medium">
+            {mutation.error instanceof Error
+              ? mutation.error.message
+              : signError || "Failed to authenticate"}
+          </span>
         )}
       </div>
     </div>
