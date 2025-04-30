@@ -29,10 +29,12 @@ export async function getLeaderboard(
   }
 
   // Get total count of users
-  const [{ count }] = db
+  const result = db
     .select({ count: sql<number>`count(*)` })
     .from(users)
     .all();
+
+  const count = result[0]?.count ?? 0;
 
   // Get paginated user data sorted by auth_count desc, first_auth asc
   const entries = db

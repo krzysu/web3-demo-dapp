@@ -41,10 +41,10 @@ describe("GET /leaderboard", () => {
 
     // Verify entries are sorted by authCount desc
     expect(data.entries).toHaveLength(3);
-    expect(data.entries[0].authCount).toBe(7); // Highest auth count first
-    expect(data.entries[0].address as Address).toBe(testUsers[2].address);
-    expect(data.entries[1].authCount).toBe(5);
-    expect(data.entries[2].authCount).toBe(3);
+    expect(data.entries[0]?.authCount).toBe(7); // Highest auth count first
+    expect(data.entries[0]?.address as Address).toBe(testUsers[2]?.address);
+    expect(data.entries[1]?.authCount).toBe(5);
+    expect(data.entries[2]?.authCount).toBe(3);
 
     // Verify entry structure
     const entry = data.entries[0];
@@ -69,8 +69,8 @@ describe("GET /leaderboard", () => {
 
     // Verify we get correct slice of data
     expect(data.entries).toHaveLength(2);
-    expect(data.entries[0].authCount).toBe(5); // Second highest auth count
-    expect(data.entries[1].authCount).toBe(3); // Third highest auth count
+    expect(data.entries[0]?.authCount).toBe(5); // Second highest auth count
+    expect(data.entries[1]?.authCount).toBe(3); // Third highest auth count
   });
 
   it("should return empty entries array when offset exceeds total", async () => {

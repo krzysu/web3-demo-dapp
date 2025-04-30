@@ -1,7 +1,8 @@
 import * as dotenv from "dotenv";
 import express from "express";
-import type { Request, Response, NextFunction } from "express";
 import asyncHandler from "express-async-handler";
+import type { Request, Response, NextFunction } from "express";
+import type { ZodSchema } from "zod";
 
 import { AuthError, ValidationError, ApiError } from "./utils/errors.js";
 import { createAuthToken, verifySignature } from "./handlers/auth.handler.js";
@@ -25,7 +26,7 @@ app.locals.db = db;
 app.use(express.json());
 
 // Zod validation middleware
-const validateBody = (schema: any) => {
+const validateBody = (schema: ZodSchema) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       req.body = await schema.parseAsync(req.body);
@@ -36,7 +37,7 @@ const validateBody = (schema: any) => {
   };
 };
 
-const validateParams = (schema: any) => {
+const validateParams = (schema: ZodSchema) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       req.params = await schema.parseAsync(req.params);
@@ -47,7 +48,7 @@ const validateParams = (schema: any) => {
   };
 };
 
-const validateQuery = (schema: any) => {
+const validateQuery = (schema: ZodSchema) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const validated = await schema.parseAsync(req.query);
@@ -82,6 +83,9 @@ app.get(
   validateParams(balancesParamSchema),
   asyncHandler(async (req: Request, res: Response) => {
     const { address } = req.params;
+    if (!address) {
+      throw new ValidationError("Address is required");
+    }
     const result = await getTokenBalances(address);
     res.json(result);
   })

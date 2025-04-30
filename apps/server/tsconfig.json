@@ -3,6 +3,9 @@
     "target": "ESNext",
     "module": "NodeNext",
     "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "types": ["node", "vitest"]
